@@ -1,6 +1,19 @@
 titanium
 ========
 
+Titanium is light-weight evaluator for PMML models based on NumPy. With Titanium you are able to take predictive
+model stored in pmml file, load it and start using it for making new predictions. It has the same API as you may know
+when using widely known machine learning libraries like *Keras* or *scikit-learn* - e.g.:
+
+* **predict_proba(X)**
+* **predict_classes(X)**
+
+It natively supports batch processing as input is expected to be 2D NumPy array. For list of supported models see bellow.
+
+The concept behind the name is that Titanium as the element is light and extremely durable material. Moreover it's
+resistant to corrosion - which has a parallel as mathematics behind the neural network evaluation using matrix
+operations is above any particular implementations.
+
 Installation
 ------------
 
