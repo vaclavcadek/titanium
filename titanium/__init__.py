@@ -8,7 +8,8 @@ from titanium import evaluation, activation
 
 SUPPORTED_NS = {
     '4.2': 'http://www.dmg.org/PMML-4_2',
-    '4.2.1': 'http://www.dmg.org/PMML-4_2'
+    '4.2.1': 'http://www.dmg.org/PMML-4_2',
+    '4.3': 'http://www.dmg.org/PMML-4_3'
 }
 
 
