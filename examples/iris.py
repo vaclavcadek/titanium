@@ -41,9 +41,9 @@ params = {
     'model_name': 'Iris Model'
 }
 
-keras2pmml(model, file='iris.pmml', **params)
+keras2pmml(model, transformer=std, file='iris.pmml', **params)
 pmml = ti.read_pmml('iris.pmml')
-os.unlink('iris.pmml')
+#os.unlink('iris.pmml')
 
 keras_preds = model.predict_classes(X_test_scaled)
 titanium_preds = pmml.predict_classes(X_test_scaled)

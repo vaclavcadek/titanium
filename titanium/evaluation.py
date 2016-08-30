@@ -2,13 +2,17 @@ import numpy as np
 
 
 class FullyConnectedNeuralNetworkEvaluator:
-    def __init__(self, weights, biases, activations):
+    def __init__(self, weights, biases, activations, norms=None):
+        self._norms = norms
         self._weights = weights
         self._biases = biases
         self._activations = activations
         self._num_layers = len(self._weights)
 
     def predict_proba(self, X):
+        if self._norms:
+            for i, fn in enumerate(self._norms):
+                X[:, i] = fn(X[:, i])
         a = X
         for i in range(self._num_layers):
             g = self._activations[i]

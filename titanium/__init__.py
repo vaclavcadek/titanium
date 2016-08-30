@@ -26,6 +26,17 @@ def read_pmml(file):
         msg = 'Unsupported version of PMML.\nSupported versions are: {}'.format(SUPPORTED_NS.keys())
         raise PMMLVersionNotSupportedException(msg)
     nn = pmml.find('{}:NeuralNetwork'.format(version), SUPPORTED_NS)
+    neural_inputs = nn.find('{}:NeuralInputs'.format(version), SUPPORTED_NS).findall('{}:NeuralInput'.format(version),
+                                                                                     SUPPORTED_NS)
+    norms = []
+    for ni in neural_inputs:
+        nc = ni.find('{}:DerivedField'.format(version), SUPPORTED_NS).find('{}:NormContinuous'.format(version), SUPPORTED_NS)
+        ln = nc.findall('{}:LinearNorm'.format(version), SUPPORTED_NS)
+        x0 = float(ln[0].attrib['orig'])
+        y0 = float(ln[0].attrib['norm'])
+        x1 = float(ln[1].attrib['orig'])
+        y1 = float(ln[1].attrib['norm'])
+        norms.append(lambda x: y0 + (x - x0) / (x1 - x0) * (y1 - y0))
     layers = nn.findall('{}:NeuralLayer'.format(version), SUPPORTED_NS)
     weights = []
     biases = []
@@ -38,4 +49,4 @@ def read_pmml(file):
             connections = n.findall('{}:Con'.format(version), SUPPORTED_NS)
             W.append([float(c.attrib['weight']) for c in connections])
         weights.append(np.array(W))
-    return evaluation.FullyConnectedNeuralNetworkEvaluator(weights, biases, activations)
+    return evaluation.FullyConnectedNeuralNetworkEvaluator(weights, biases, activations, norms)
