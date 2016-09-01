@@ -20,7 +20,7 @@ theano.config.floatX = 'float32'
 X = X.astype(theano.config.floatX)
 y = y.astype(np.int32)
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=.3)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=.3, random_state=42)
 
 y_train_ohe = np_utils.to_categorical(y_train)
 y_test_ohe = np_utils.to_categorical(y_test)
@@ -37,16 +37,16 @@ model.fit(X_train_scaled, y_train_ohe, nb_epoch=100, batch_size=1, verbose=3, va
 
 params = {
     'copyright': 'Václav Čadek',
-    'description': 'Simple Keras model for Iris dataset.',
+    'description': 'Simple Keras  model for Iris dataset.',
     'model_name': 'Iris Model'
 }
 
 keras2pmml(model, transformer=std, file='iris.pmml', **params)
 pmml = ti.read_pmml('iris.pmml')
-#os.unlink('iris.pmml')
+os.unlink('iris.pmml')
 
 keras_preds = model.predict_classes(X_test_scaled)
-titanium_preds = pmml.predict_classes(X_test_scaled)
+titanium_preds = pmml.predict_classes(X_test)
 
 print('Accuracy (Keras): {accuracy}'.format(accuracy=accuracy_score(y_test, keras_preds)))
 print('Accuracy (Titanium): {accuracy}'.format(accuracy=accuracy_score(y_test, titanium_preds)))

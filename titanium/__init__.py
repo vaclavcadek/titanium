@@ -30,13 +30,14 @@ def read_pmml(file):
                                                                                      SUPPORTED_NS)
     norms = []
     for ni in neural_inputs:
-        nc = ni.find('{}:DerivedField'.format(version), SUPPORTED_NS).find('{}:NormContinuous'.format(version), SUPPORTED_NS)
+        nc = ni.find('{}:DerivedField'.format(version), SUPPORTED_NS).find('{}:NormContinuous'.format(version),
+                                                                           SUPPORTED_NS)
         ln = nc.findall('{}:LinearNorm'.format(version), SUPPORTED_NS)
         x0 = float(ln[0].attrib['orig'])
         y0 = float(ln[0].attrib['norm'])
         x1 = float(ln[1].attrib['orig'])
         y1 = float(ln[1].attrib['norm'])
-        norms.append(lambda x: y0 + (x - x0) / (x1 - x0) * (y1 - y0))
+        norms.append(lambda x, x0=x0, y0=y0, x1=x1, y1=y1: y0 + (x - x0) / (x1 - x0) * (y1 - y0))
     layers = nn.findall('{}:NeuralLayer'.format(version), SUPPORTED_NS)
     weights = []
     biases = []
