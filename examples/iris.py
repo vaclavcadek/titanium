@@ -31,7 +31,7 @@ X_test_scaled = std.transform(X_test)
 model = Sequential()
 model.add(Dense(input_dim=X_train_scaled.shape[1], output_dim=20, activation='tanh'))
 model.add(Dense(input_dim=20, output_dim=5, activation='tanh'))
-model.add(Dense(input_dim=5, output_dim=y_test_ohe.shape[1], activation='sigmoid'))
+model.add(Dense(input_dim=5, output_dim=y_train_ohe.shape[1], activation='sigmoid'))
 model.compile(loss='categorical_crossentropy', optimizer='sgd')
 model.fit(X_train_scaled, y_train_ohe, nb_epoch=100, batch_size=1, verbose=3, validation_data=None)
 
