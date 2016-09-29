@@ -10,10 +10,10 @@ class FullyConnectedNeuralNetworkEvaluator:
         self._num_layers = len(self._weights)
 
     def predict_proba(self, X):
+        a = X.copy()
         if self._norms:
             for i, fn in enumerate(self._norms):
-                X[:, i] = fn(X[:, i])
-        a = X
+                a[:, i] = fn(a[:, i])
         for i in range(self._num_layers):
             g = self._activations[i]
             W = self._weights[i]
