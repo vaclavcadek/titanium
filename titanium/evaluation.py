@@ -35,30 +35,33 @@ class TreeModelEvaluator:
         self._get_score_distributions = get_score_distributions
 
     def predict_proba(self, X):
-        node = self._root
-        while True:
-            children = self._get_children(node)
-            # is leaf
-            if len(children) == 0:
-                break
-            else:
-                p = self._get_predicate(children[0])
-                field = p.attrib['field']
-                operator = p.attrib['operator']
-                split_point = float(p.attrib['value'])
-                val = X[self._fields.index(field)]
-                condition = {
-                    'greaterThan': val > split_point,
-                    'greaterOrEqual': val >= split_point,
-                    'lessThan': val < split_point,
-                    'lessOrEqual': val <= split_point,
-                }[operator]
-                if condition:
-                    node = children[0]
+        probs = []
+        for i in range(X.shape[0]):
+            node = self._root
+            while True:
+                children = self._get_children(node)
+                # is leaf
+                if len(children) == 0:
+                    break
                 else:
-                    node = children[1]
-        rc = [float(c.attrib['recordCount']) for c in self._get_score_distributions(node)]
-        return np.array(rc) / np.sum(rc)
+                    p = self._get_predicate(children[0])
+                    field = p.attrib['field']
+                    operator = p.attrib['operator']
+                    split_point = float(p.attrib['value'])
+                    val = X[i, self._fields.index(field)]
+                    condition = {
+                        'greaterThan': val > split_point,
+                        'greaterOrEqual': val >= split_point,
+                        'lessThan': val < split_point,
+                        'lessOrEqual': val <= split_point,
+                    }[operator]
+                    if condition:
+                        node = children[0]
+                    else:
+                        node = children[1]
+            record_counts = [float(c.attrib['recordCount']) for c in self._get_score_distributions(node)]
+            probs.append(np.array(record_counts) / np.sum(record_counts))
+        return np.array(probs)
 
     def predict_classes(self, X):
         probs = self.predict_proba(X)
