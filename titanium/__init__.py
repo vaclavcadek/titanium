@@ -78,19 +78,26 @@ def read_pmml(file, model='NeuralNetwork'):
         return evaluation.TreeModelEvaluator(fields, root, get_children, get_predicate, get_score_distributions)
 
     elif model == 'Segmentation':
-        segmentation = pmml.find('{}:Segmentation'.format(version), SUPPORTED_NS)
-        decision_tree = pmml.find('{}:TreeModel'.format(version), SUPPORTED_NS)
-        mining_schema = decision_tree.find('{}:MiningSchema'.format(version), SUPPORTED_NS)
+        mining_model = pmml.find('{}:MiningModel'.format(version), SUPPORTED_NS)
+        mining_schema = mining_model.find('{}:MiningSchema'.format(version), SUPPORTED_NS)
+        segmentation = mining_model.find('{}:Segmentation'.format(version), SUPPORTED_NS)
         mining_fields = mining_schema.findall('{}:MiningField'.format(version), SUPPORTED_NS)
-        root = decision_tree.find('{}:Node'.format(version), SUPPORTED_NS)
-        fields = [f.attrib['name'] for f in mining_fields if f.attrib.get('usageType', None) != 'predicted']
+        segments = []
+        for segment in segmentation.findall('{}:Segment'.format(version), SUPPORTED_NS):
+            decision_tree = segment.find('{}:TreeModel'.format(version), SUPPORTED_NS)
+            root = decision_tree.find('{}:Node'.format(version), SUPPORTED_NS)
+            fields = ['x{}'.format(i) for i in range(1, 13)]
 
-        def get_children(node):
-            return node.findall('{}:Node'.format(version), SUPPORTED_NS)
+            def get_children(node):
+                return node.findall('{}:Node'.format(version), SUPPORTED_NS)
 
-        def get_predicate(node):
-            return node.find('{}:SimplePredicate'.format(version), SUPPORTED_NS)
+            def get_predicate(node):
+                return node.find('{}:SimplePredicate'.format(version), SUPPORTED_NS)
 
-        def get_score_distributions(node):
-            return node.findall('{}:ScoreDistribution'.format(version), SUPPORTED_NS)
-        return evaluation.TreeModelEvaluator(fields, root, get_children, get_predicate, get_score_distributions)
+            def get_score_distributions(node):
+                return node.findall('{}:ScoreDistribution'.format(version), SUPPORTED_NS)
+
+            evaluator = evaluation.TreeModelEvaluator(fields, root, get_children, get_predicate, get_score_distributions)
+            segments.append(evaluator)
+
+        return evaluation.SegmentationEvaluator(segments)

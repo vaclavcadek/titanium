@@ -66,3 +66,19 @@ class TreeModelEvaluator:
     def predict_classes(self, X):
         probs = self.predict_proba(X)
         return np.argmax(probs, 1)
+
+
+class SegmentationEvaluator:
+    def __init__(self, segment_evaluators):
+        self._segment_evaluators = segment_evaluators
+
+    def predict_proba(self, X):
+        probs = np.zeros(self._segment_evaluators[0].predict_proba(X).shape)
+        individual_predictions = [t.predict_proba(X) for t in self._segment_evaluators]
+        for predictions in individual_predictions:
+            probs += predictions
+        return np.array(probs) / len(individual_predictions)
+
+    def predict_classes(self, X):
+        probs = self.predict_proba(X)
+        return np.argmax(probs, 1)
