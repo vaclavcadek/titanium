@@ -64,7 +64,7 @@ def read_pmml(file, model='NeuralNetwork'):
         mining_schema = decision_tree.find('{}:MiningSchema'.format(version), SUPPORTED_NS)
         mining_fields = mining_schema.findall('{}:MiningField'.format(version), SUPPORTED_NS)
         root = decision_tree.find('{}:Node'.format(version), SUPPORTED_NS)
-        fields = [f.attrib['name'] for f in mining_fields if f.attrib.get('usageType', None) != 'predicted']
+        fields = [f.attrib['name'] for f in mining_fields if f.attrib.get('usageType', None) not in ['predicted', 'target']]
 
         def get_children(node):
             return node.findall('{}:Node'.format(version), SUPPORTED_NS)
@@ -79,14 +79,14 @@ def read_pmml(file, model='NeuralNetwork'):
 
     elif model == 'Segmentation':
         mining_model = pmml.find('{}:MiningModel'.format(version), SUPPORTED_NS)
-        mining_schema = mining_model.find('{}:MiningSchema'.format(version), SUPPORTED_NS)
         segmentation = mining_model.find('{}:Segmentation'.format(version), SUPPORTED_NS)
+        mining_schema = mining_model.find('{}:MiningSchema'.format(version), SUPPORTED_NS)
         mining_fields = mining_schema.findall('{}:MiningField'.format(version), SUPPORTED_NS)
         segments = []
         for segment in segmentation.findall('{}:Segment'.format(version), SUPPORTED_NS):
             decision_tree = segment.find('{}:TreeModel'.format(version), SUPPORTED_NS)
             root = decision_tree.find('{}:Node'.format(version), SUPPORTED_NS)
-            fields = ['x{}'.format(i) for i in range(1, 13)]
+            fields = [f.attrib['name'] for f in mining_fields if f.attrib.get('usageType', None) not in ['predicted', 'target']]
 
             def get_children(node):
                 return node.findall('{}:Node'.format(version), SUPPORTED_NS)
