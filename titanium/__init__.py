@@ -14,7 +14,8 @@ SUPPORTED_NS = {
 
 SUPPORTED_MODELS = [
     'NeuralNetwork',
-    'TreeModel'
+    'TreeModel',
+    'Segmentation'
 ]
 
 
