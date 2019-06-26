@@ -16,7 +16,7 @@ setup(
     license='MIT',
     description='Titanium is light-weight evaluator for PMML models based on NumPy.',
     long_description=long_description,
-    url='https://github.com/vaclavcadek/keras2pmml',
+    url='https://github.com/vaclavcadek/titanium',
     author='Václav Čadek',
     author_email='vaclavcadek@gmail.com',
     install_requires=['numpy==1.11.1'],
