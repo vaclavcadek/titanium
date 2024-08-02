@@ -20,7 +20,7 @@ setup(
     author='Václav Čadek',
     author_email='vaclavcadek@gmail.com',
     install_requires=['numpy==1.11.1'],
-    tests_require=['scikit-learn==0.17.1', 'keras==1.0.6', 'theano==0.8.2', 'keras2pmml==0.1.0'],
+    tests_require=['scikit-learn==0.17.1', 'keras==2.13.1', 'theano==0.8.2', 'keras2pmml==0.1.0'],
     classifiers=[
         'Intended Audience :: Science/Research',
         'Intended Audience :: Developers',
